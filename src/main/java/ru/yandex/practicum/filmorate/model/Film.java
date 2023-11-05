@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.validation.IdBelonging;
 import ru.yandex.practicum.filmorate.validation.PresetIdValidation;
 import ru.yandex.practicum.filmorate.validation.ReleaseDateValidation;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Validated
