@@ -34,7 +34,16 @@ public class ErrorHandlingController {
             loggerPath = FilmController.class;
         }
         Logger logger = LoggerFactory.getLogger(loggerPath);
-        logger.error(loggerPath.getSimpleName() + " validation error: " + response.entrySet());
+        logger.error("{} validation error: {}", loggerPath.getSimpleName(), response.entrySet());
+        return response;
+    }
+
+    @ExceptionHandler(ItemNotPresentException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Map<String, String> itemNotPresentHandle(ItemNotPresentException e) {
+        Map<String, String> response = new HashMap<>();
+        response.put("id", e.getMessage());
         return response;
     }
 

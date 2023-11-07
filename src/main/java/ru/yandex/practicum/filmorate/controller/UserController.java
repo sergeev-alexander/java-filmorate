@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Validated
 @RestController
 public class UserController {
 
-    private static final Map<Integer, User> userMap = new HashMap<>();
+    private final Map<Integer, User> userMap = new HashMap<>();
     private Integer idCounter = 1;
 
     @GetMapping("/users")
@@ -27,26 +26,28 @@ public class UserController {
     @PostMapping("/users")
     public User postUser(@Valid @RequestBody User user) {
         user.setId(idCounter++);
-        if (null == user.getName()) {
-            user.setName(user.getLogin());
-        }
+        userNameCheck(user);
         userMap.put(user.getId(), user);
-        log.info("Added new user: " + user);
+        log.info("Added new user: {}", user);
         return user;
     }
 
     @PutMapping("/users")
     public User putUser(@Valid @RequestBody User user) {
-        if (null == user.getName()) {
-            user.setName(user.getLogin());
+        if (user.getId() == null || !userMap.containsKey(user.getId())) {
+            log.error("User validation error : There's no user with {} id!", user.getId());
+            throw new ItemNotPresentException("There's no user with " + user.getId() + " id!");
         }
+        userNameCheck(user);
         userMap.put(user.getId(), user);
-        log.info("Updated user: " + user);
+        log.info("Updated user: {}", user);
         return user;
     }
 
-    public static boolean isUserPresent(Integer id) {
-        return userMap.containsKey(id);
+    private void userNameCheck(User user) {
+        if (null == user.getName() || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 
 }

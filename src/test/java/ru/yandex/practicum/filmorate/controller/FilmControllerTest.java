@@ -57,8 +57,6 @@ class FilmControllerTest {
         for (ConstraintViolation<Film> violation : violationSet) {
             messageTemplates.add(violation.getMessageTemplate());
         }
-        assertTrue(messageTemplates.contains("There's no film with such id!"),
-                "Id validation failed!");
         assertTrue(messageTemplates.contains("Name field is empty!"),
                 "Name validation failed!");
         assertTrue(messageTemplates.contains("Description field must be less 200 characters!"),

@@ -50,8 +50,6 @@ class UserControllerTest {
         for (ConstraintViolation<User> violation : violationSet) {
             messageTemplates.add(violation.getMessageTemplate());
         }
-        assertTrue(messageTemplates.contains("There's no user with such id!"),
-                "Id validation failed!");
         assertTrue(messageTemplates.contains("Wrong email format!"),
                 "Email validation failed!");
         assertTrue(messageTemplates.contains("Login field should be without whitespaces!"),
