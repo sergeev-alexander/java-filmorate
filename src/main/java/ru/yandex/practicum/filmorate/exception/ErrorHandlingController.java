@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
@@ -16,12 +13,11 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ErrorHandlingController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
     public Map<String, String> autoValidationHendle(MethodArgumentNotValidException e) {
         Map<String, String> response = new HashMap<>();
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
@@ -40,7 +36,6 @@ public class ErrorHandlingController {
 
     @ExceptionHandler(ItemNotPresentException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
     public Map<String, String> itemNotPresentHandle(ItemNotPresentException e) {
         Map<String, String> response = new HashMap<>();
         response.put("id", e.getMessage());
