@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class inMemoryUserStorage implements UserStorage {
+public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> userMap = new HashMap<>();
     private Integer idCounter = 1;
