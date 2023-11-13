@@ -34,7 +34,7 @@ public class UserService {
         userStorage.presenceCheck(id);
         userStorage.presenceCheck(otherId);
         List<User> commonFriends = new ArrayList<>();
-        for(User friend : getAllUserFriends(id)) {
+        for (User friend : getAllUserFriends(id)) {
             if (getAllUserFriends(otherId).contains(friend)) {
                 commonFriends.add(friend);
             }
