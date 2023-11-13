@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -27,5 +29,7 @@ public class Film {
     @NotNull
     @Positive(message = "Duration field must be positive!")
     private Long duration;
+
+    private Set<Integer> likes = new HashSet<>();
 
 }

@@ -15,4 +15,3 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDateVali
     }
 
 }
-

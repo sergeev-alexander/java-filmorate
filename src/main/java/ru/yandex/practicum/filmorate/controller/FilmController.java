@@ -1,46 +1,61 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
 public class FilmController {
 
+    FilmStorage filmStorage;
+    FilmService filmService;
 
-    private final Map<Integer, Film> filmMap = new HashMap<>();
-    private Integer filmIdCounter = 1;
+    @Autowired
+    public FilmController(FilmStorage filmStorage, FilmService filmService) {
+        this.filmStorage = filmStorage;
+        this.filmService = filmService;
+    }
 
     @GetMapping("/films")
     public List<Film> getAllFilms() {
-        return new ArrayList<>(filmMap.values());
+        return filmStorage.getAllFilms();
+    }
+
+    @GetMapping("/films/{id}")
+    public Film getFilmById(@PathVariable Integer id) {
+        return filmStorage.getFilmById(id);
+    }
+
+    @GetMapping("/films/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
+        return filmService.getPopularFilms(count);
     }
 
     @PostMapping("/films")
     public Film postFilm(@Valid @RequestBody Film film) {
-        film.setId(filmIdCounter++);
-        filmMap.put(film.getId(), film);
-        log.info("Added new film: {}", film);
-        return film;
+        return filmStorage.postFilm(film);
     }
 
     @PutMapping("/films")
     public Film putFilm(@Valid @RequestBody Film film) {
-        if (film.getId() == null || !filmMap.containsKey(film.getId())) {
-            log.error("Film validation error : There's no film with {} id!", film.getId());
-            throw new ItemNotPresentException("There's no film with " + film.getId() + " id!");
-        }
-        filmMap.put(film.getId(), film);
-        log.info("Updated film: {}", film);
-        return film;
+        return filmStorage.putFilm(film);
+    }
+
+    @PutMapping("/films/{id}/like/{userId}")
+    public void putLike(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.putLike(id, userId);
+    }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.deleteLike(id, userId);
     }
 
 }
