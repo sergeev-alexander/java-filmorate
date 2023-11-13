@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class inMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Integer, Film> filmMap = new HashMap<>();
     private Integer filmIdCounter = 1;
