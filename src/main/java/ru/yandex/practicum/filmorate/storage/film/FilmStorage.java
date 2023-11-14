@@ -14,6 +14,4 @@ public interface FilmStorage {
 
     Film putFilm(Film film);
 
-    void presenceCheck(Integer id);
-
 }

@@ -5,10 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -24,8 +21,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(Integer id) {
-        presenceCheck(id);
-        return userMap.get(id);
+        return Optional.ofNullable(userMap.get(id)).orElseThrow(
+                () -> new ItemNotPresentException("There's no user with " + id + " id!"));
     }
 
     @Override
@@ -43,7 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.error("User validation error : User has an empty id!");
             throw new ItemNotPresentException("User has an empty id!");
         }
-        presenceCheck(user.getId());
+        getUserById(user.getId());
         userNameCheck(user);
         userMap.put(user.getId(), user);
         log.info("Updated user: {}", user);
@@ -52,25 +49,18 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void putNewFriend(Integer id, Integer friendId) {
-        presenceCheck(id);
-        presenceCheck(friendId);
+        getUserById(id);
+        getUserById(friendId);
         userMap.get(id).getFriends().add(friendId);
         userMap.get(friendId).getFriends().add(id);
     }
 
     @Override
     public void deleteFriend(Integer id, Integer friendId) {
-        presenceCheck(id);
-        presenceCheck(friendId);
+        getUserById(id);
+        getUserById(friendId);
         userMap.get(id).getFriends().remove(friendId);
         userMap.get(friendId).getFriends().remove(id);
-    }
-
-    public void presenceCheck(Integer id) {
-        if (id == null || !userMap.containsKey(id)) {
-            log.error("User validation error : There's no user with {} id!", id);
-            throw new ItemNotPresentException("There's no user with " + id + " id!");
-        }
     }
 
     private void userNameCheck(User user) {

@@ -14,23 +14,21 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    UserStorage userStorage;
-    UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
         this.userService = userService;
     }
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable Integer id) {
-        return userStorage.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @GetMapping("users/{id}/friends")
@@ -45,22 +43,22 @@ public class UserController {
 
     @PostMapping("/users")
     public User postUser(@Valid @RequestBody User user) {
-        return userStorage.postUser(user);
+        return userService.postUser(user);
     }
 
     @PutMapping("/users")
     public User putUser(@Valid @RequestBody User user) {
-        return userStorage.putUser(user);
+        return userService.putUser(user);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
     public void putNewFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
-        userStorage.putNewFriend(id, friendId);
+        userService.putNewFriend(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
-        userStorage.deleteFriend(id, friendId);
+        userService.deleteFriend(id, friendId);
     }
 
 }

@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -24,8 +21,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Integer id) {
-        presenceCheck(id);
-        return filmMap.get(id);
+        return Optional.ofNullable(filmMap.get(id)).orElseThrow(
+                () -> new ItemNotPresentException("There's no film with " + id + " id!"));
     }
 
     @Override
@@ -42,17 +39,10 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.error("Film validation error : Film has an empty id!");
             throw new ItemNotPresentException("Film has an empty id!");
         }
-        presenceCheck(film.getId());
+        getFilmById(film.getId());
         filmMap.put(film.getId(), film);
         log.info("Updated film: {}", film);
         return film;
-    }
-
-    public void presenceCheck(Integer id) {
-        if (id == null || !filmMap.containsKey(id)) {
-            log.error("Film validation error : There's no film with {} id!", id);
-            throw new ItemNotPresentException("There's no film with " + id + " id!");
-        }
     }
 
 }

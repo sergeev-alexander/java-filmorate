@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -18,12 +18,17 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    public List<User> getAllUsers() {
+        return userStorage.getAllUsers();
+    }
+
+    public User getUserById(Integer id) {
+        return userStorage.getUserById(id);
+    }
+
     public List<User> getAllUserFriends(Integer id) {
         User user = userStorage.getUserById(id);
-        ArrayList<User> friendsList = new ArrayList<>();
-        if (user.getFriends() == null) {
-            return friendsList;
-        }
+        List<User> friendsList = new LinkedList<>();
         for (Integer friendId : user.getFriends()) {
             friendsList.add(userStorage.getUserById(friendId));
         }
@@ -31,15 +36,31 @@ public class UserService {
     }
 
     public List<User> getUsersCommonFriends(Integer id, Integer otherId) {
-        userStorage.presenceCheck(id);
-        userStorage.presenceCheck(otherId);
-        List<User> commonFriends = new ArrayList<>();
+        getUserById(id);
+        getUserById(otherId);
+        List<User> commonFriends = new LinkedList<>();
         for (User friend : getAllUserFriends(id)) {
             if (getAllUserFriends(otherId).contains(friend)) {
                 commonFriends.add(friend);
             }
         }
         return commonFriends;
+    }
+
+    public User postUser(User user) {
+        return userStorage.postUser(user);
+    }
+
+    public User putUser(User user) {
+        return userStorage.putUser(user);
+    }
+
+    public void putNewFriend(Integer id, Integer friendId) {
+        userStorage.putNewFriend(id, friendId);
+    }
+
+    public void deleteFriend(Integer id, Integer friendId) {
+        userStorage.deleteFriend(id, friendId);
     }
 
 }
