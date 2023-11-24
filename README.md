@@ -5,7 +5,7 @@ Template repository for Filmorate project.
 
 
 -- SOME QUERRY EXAMPLES --
-
+```
 -- get film by <film_id>
 
 SELECT *
@@ -78,8 +78,8 @@ WHERE friendships.user_id = <user_id>
 SELECT *
 FROM users
 WHERE users.user_id NOT IN (SELECT friend_id
-					   		            FROM friendships
-					   		            WHERE friendships.user_id = <user_id>);
+			    FROM friendships
+			    WHERE friendships.user_id = <user_id>);
 
 
 -- get <user_id> friends quantity in status <frendship_status.name>
@@ -91,3 +91,4 @@ INNER JOIN friendships USING (user_id)
 INNER JOIN friendship_statuses USING (friendship_status_id)
 WHERE friendships.user_id = <user_id>
 	AND frendship_statuses.name = '<frendship_status.name>';
+```
