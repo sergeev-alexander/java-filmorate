@@ -23,4 +23,3 @@ public @interface ReleaseDateValidation {
     Class<? extends Payload>[] payload() default {};
 
 }
-
