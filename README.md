@@ -36,16 +36,4 @@ SELECT user_id
 FROM rates
 WHERE film_id = <film_id>;
 
-
---get users friends by <user_id>
-
-SELECT *
-FROM users
-INNER JOIN frienships USING (user_id)
-WHERE user_id = <user_id>;
-FROM users
-INNER JOIN friendships USING (user_id)
-INNER JOIN friendship_statuses USING (friendship_status_id)
-WHERE friendships.user_id = <user_id>
-	AND frendship_statuses.name = '<frendship_status.name>';
 ```
