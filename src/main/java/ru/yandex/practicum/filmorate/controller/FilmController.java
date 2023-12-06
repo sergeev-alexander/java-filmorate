@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Validated
@@ -45,7 +44,7 @@ public class FilmController {
     }
 
     @GetMapping("/genres")
-    public Set<Genre> getAllGenres() {
+    public List<Genre> getAllGenres() {
         return filmService.getAllGenres();
     }
 
@@ -55,7 +54,7 @@ public class FilmController {
     }
 
     @GetMapping("/mpa")
-    public Set<Mpa> getAllMpa() {
+    public List<Mpa> getAllMpa() {
         return filmService.getAllMpa();
     }
 

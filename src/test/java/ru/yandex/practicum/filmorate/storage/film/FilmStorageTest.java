@@ -78,7 +78,7 @@ class FilmStorageTest {
     void getAllGenres_normal_behavior() {
         assertNotNull(filmDbStorage.getAllGenres(),
                 "Received set is null!");
-        assertEquals(Set.copyOf(createGenres()), filmDbStorage.getAllGenres(),
+        assertEquals(createGenres(), filmDbStorage.getAllGenres(),
                 "Received wrong genres!");
     }
 
@@ -106,8 +106,8 @@ class FilmStorageTest {
     void getAllMpa_normal_behavior() {
         assertNotNull(filmDbStorage.getAllMpa(),
                 "Received set is null!");
-        assertEquals(Set.copyOf(createMpas()), filmDbStorage.getAllMpa(),
-                "Received wrong mpa_ratigs!");
+        assertEquals(createMpas(), filmDbStorage.getAllMpa(),
+                "Received wrong mpa_ratings!");
     }
 
     @Test

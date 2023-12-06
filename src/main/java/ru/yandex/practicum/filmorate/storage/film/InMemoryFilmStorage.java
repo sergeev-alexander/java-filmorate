@@ -28,7 +28,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Genre> getAllGenres() {
+    public List<Genre> getAllGenres() {
         return null;
     }
 
@@ -38,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Mpa> getAllMpa() {
+    public List<Mpa> getAllMpa() {
         return null;
     }
 

@@ -61,8 +61,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Genre> getAllGenres() {
-        return new HashSet<>(jdbcTemplate.query("SELECT * FROM genres", genreMapper));
+    public List<Genre> getAllGenres() {
+        return new LinkedList<>(jdbcTemplate.query("SELECT * FROM genres", genreMapper));
     }
 
     @Override
@@ -76,8 +76,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Mpa> getAllMpa() {
-        return new HashSet<>(jdbcTemplate.query("SELECT * " +
+    public List<Mpa> getAllMpa() {
+        return new LinkedList<>(jdbcTemplate.query("SELECT * " +
                 "FROM mpa_ratings", mpaMapper));
     }
 

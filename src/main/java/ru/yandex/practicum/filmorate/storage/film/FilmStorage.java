@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
-import java.util.Set;
 
 public interface FilmStorage {
 
@@ -13,11 +12,11 @@ public interface FilmStorage {
 
     Film getFilmById(Integer filmId);
 
-    Set<Genre> getAllGenres();
+    List<Genre> getAllGenres();
 
     Genre getGenreById(Integer genreId);
 
-    Set<Mpa> getAllMpa();
+    List<Mpa> getAllMpa();
 
     Mpa getMpaById(Integer mpaId);
 
