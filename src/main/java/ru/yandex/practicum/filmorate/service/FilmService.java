@@ -1,30 +1,27 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @Service
 public class FilmService {
 
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
-
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
+    @Qualifier("FilmDbStorage")
+    private FilmStorage filmStorage;
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -35,6 +32,22 @@ public class FilmService {
                 () -> new ItemNotPresentException("There's no film with " + id + " id!"));
     }
 
+    public Set<Genre> getAllGenres() {
+        return filmStorage.getAllGenres();
+    }
+
+    public Genre getGenreById(Integer genreId) {
+        return filmStorage.getGenreById(genreId);
+    }
+
+    public Set<Mpa> getAllMpa() {
+        return filmStorage.getAllMpa();
+    }
+
+    public Mpa getMpaById(Integer mpaId) {
+        return filmStorage.getMpaById(mpaId);
+    }
+
     public Film postFilm(Film film) {
         return filmStorage.postFilm(film);
     }
@@ -43,25 +56,19 @@ public class FilmService {
         return filmStorage.putFilm(film);
     }
 
-    public void putLike(Integer id, Integer userId) {
-        userStorage.getUserById(userId);
-        getFilmById(id).getLikes().add(userId);
-        log.info("User {} liked film {}", userId, id);
+    public void putRate(Integer filmId, Integer userId) {
+        filmStorage.putRate(filmId, userId);
     }
 
-    public void deleteLike(Integer id, Integer userId) {
-        userStorage.getUserById(userId);
-        getFilmById(id).getLikes().remove(userId);
-        log.info("User {} unliked film {}", userId, id);
+    public void deleteRate(Integer filmId, Integer userId) {
+        filmStorage.deleteRate(filmId, userId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        List<Film> filmList = filmStorage.getAllFilms().stream()
-                .sorted(Comparator.comparing(film -> film.getLikes().size(), Comparator.nullsLast(Comparator.reverseOrder())))
+        return filmStorage.getAllFilms().stream()
+                .sorted(Comparator.comparing(film -> film.getRates().size(), Comparator.nullsLast(Comparator.reverseOrder())))
                 .limit(count)
                 .collect(Collectors.toList());
-        log.info("Showed popular films {}", filmList);
-        return filmList;
     }
 
 }

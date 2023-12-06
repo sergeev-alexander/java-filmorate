@@ -26,6 +26,16 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public List<User> getAllUserFriends(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<User> getUserCommonFriends(Integer id, Integer otherId) {
+        return null;
+    }
+
+    @Override
     public User postUser(User user) {
         user.setId(idCounter++);
         userNameCheck(user);
@@ -49,18 +59,12 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void putNewFriend(Integer id, Integer friendId) {
-        getUserById(id);
-        getUserById(friendId);
-        userMap.get(id).getFriends().add(friendId);
-        userMap.get(friendId).getFriends().add(id);
+
     }
 
     @Override
     public void deleteFriend(Integer id, Integer friendId) {
-        getUserById(id);
-        getUserById(friendId);
-        userMap.get(id).getFriends().remove(friendId);
-        userMap.get(friendId).getFriends().remove(id);
+
     }
 
     private void userNameCheck(User user) {

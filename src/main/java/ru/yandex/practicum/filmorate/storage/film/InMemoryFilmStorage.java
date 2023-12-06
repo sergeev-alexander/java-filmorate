@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.*;
 
 @Slf4j
-@Component
+@Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Integer, Film> filmMap = new HashMap<>();
@@ -23,6 +25,26 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmById(Integer id) {
         return Optional.ofNullable(filmMap.get(id)).orElseThrow(
                 () -> new ItemNotPresentException("There's no film with " + id + " id!"));
+    }
+
+    @Override
+    public Set<Genre> getAllGenres() {
+        return null;
+    }
+
+    @Override
+    public Genre getGenreById(Integer genreId) {
+        return null;
+    }
+
+    @Override
+    public Set<Mpa> getAllMpa() {
+        return null;
+    }
+
+    @Override
+    public Mpa getMpaById(Integer mpaId) {
+        return null;
     }
 
     @Override
@@ -43,6 +65,16 @@ public class InMemoryFilmStorage implements FilmStorage {
         filmMap.put(film.getId(), film);
         log.info("Updated film: {}", film);
         return film;
+    }
+
+    @Override
+    public void putRate(Integer filmId, Integer userId) {
+
+    }
+
+    @Override
+    public void deleteRate(Integer filmId, Integer userId) {
+
     }
 
 }
