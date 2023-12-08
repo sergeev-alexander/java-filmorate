@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Genre {
 
-    Integer id;
+    private Integer id;
 
-    String name;
+    private String name;
 
 }

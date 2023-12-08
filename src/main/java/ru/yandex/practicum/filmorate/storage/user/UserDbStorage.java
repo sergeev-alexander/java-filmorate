@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -17,7 +16,6 @@ import java.util.Map;
 
 @Slf4j
 @Repository
-@Component("UserDbStorage")
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -90,12 +88,18 @@ public class UserDbStorage implements UserStorage {
     public User putUser(User user) {
         getUserById(user.getId());
         userNameCheck(user);
-        jdbcTemplate.execute("UPDATE users SET " +
-                "name = '" + user.getName() + "', " +
-                "email = '" + user.getEmail() + "', " +
-                "login = '" + user.getLogin() + "', " +
-                "birthday = '" + user.getBirthday() + "' " +
-                "WHERE user_id = " + user.getId());
+        String query = "UPDATE users SET " +
+                "name = ?, " +
+                "email = ?, " +
+                "login = ?, " +
+                "birthday = ? " +
+                "WHERE user_id = ?;";
+        jdbcTemplate.update(query,
+                user.getName(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getBirthday(),
+                user.getId());
         return user;
     }
 
@@ -103,18 +107,18 @@ public class UserDbStorage implements UserStorage {
     public void putNewFriend(Integer userId, Integer friendId) {
         getUserById(userId);
         getUserById(friendId);
-        jdbcTemplate.execute("INSERT INTO friendships " +
+        jdbcTemplate.update("INSERT INTO friendships " +
                 "VALUES " +
-                "(" + userId + ", " + friendId + ");");
+                "(?, ?);", userId, friendId);
     }
 
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
         getUserById(userId);
         getUserById(friendId);
-        jdbcTemplate.execute("DELETE FROM friendships " +
-                "WHERE user_id = " + userId + " " +
-                "AND friend_id = " + friendId);
+        jdbcTemplate.update("DELETE FROM friendships " +
+                "WHERE user_id = ? " +
+                "AND friend_id = ?;", userId, friendId);
     }
 
     private void userNameCheck(User user) {

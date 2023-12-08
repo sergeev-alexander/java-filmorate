@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -38,29 +36,8 @@ public class FilmController {
     @GetMapping("/films/popular")
     public List<Film> getPopularFilms(
             @Positive(message = "Must be positive!")
-            @RequestParam(required = false, defaultValue = "10")
-            Integer count) {
+            @RequestParam(required = false, defaultValue = "10") Integer count) {
         return filmService.getPopularFilms(count);
-    }
-
-    @GetMapping("/genres")
-    public List<Genre> getAllGenres() {
-        return filmService.getAllGenres();
-    }
-
-    @GetMapping("genres/{genreId}")
-    public Genre getGenreById(@PathVariable Integer genreId) {
-        return filmService.getGenreById(genreId);
-    }
-
-    @GetMapping("/mpa")
-    public List<Mpa> getAllMpa() {
-        return filmService.getAllMpa();
-    }
-
-    @GetMapping("mpa/{mpaId}")
-    public Mpa getMpaById(@PathVariable Integer mpaId) {
-        return filmService.getMpaById(mpaId);
     }
 
     @PostMapping("/films")

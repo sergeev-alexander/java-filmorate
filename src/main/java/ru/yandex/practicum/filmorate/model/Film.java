@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -29,10 +30,13 @@ public class Film {
     @Positive(message = "Duration field must be positive!")
     private Long duration;
 
-    private Set<Integer> rates;
-
+    @NotNull
     private Mpa mpa;
 
-    private Set<Genre> genres;
+    private Set<Genre> genres = new HashSet<>();
+
+    public void addGenreToGenresSet(Genre genre) {
+        this.genres.add(genre);
+    }
 
 }
