@@ -30,7 +30,6 @@ public class Film {
     @Positive(message = "Duration field must be positive!")
     private Long duration;
 
-    @NotNull
     private Mpa mpa;
 
     private Set<Genre> genres = new HashSet<>();
