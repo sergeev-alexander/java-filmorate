@@ -51,7 +51,7 @@ public class FilmController {
     }
 
     @PutMapping("/films/{filmId}/like/{userId}")
-    public void putLike(@PathVariable Integer filmId, @PathVariable Integer userId) {
+    public void putRate(@PathVariable Integer filmId, @PathVariable Integer userId) {
         filmService.putRate(filmId, userId);
     }
 

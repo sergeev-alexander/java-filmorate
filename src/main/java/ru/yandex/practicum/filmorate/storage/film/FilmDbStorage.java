@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @AllArgsConstructor
@@ -20,7 +22,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film getFilmById(Integer filmId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM films " +
+            return jdbcTemplate.queryForObject("SELECT *, mpa_ratings.name AS mpa_name " +
+                    "FROM films " +
+                    "INNER JOIN mpa_ratings USING (mpa_id)" +
                     "WHERE film_id = " + filmId, filmMapper);
         } catch (EmptyResultDataAccessException e) {
             throw new ItemNotPresentException("There's no film with " + filmId + " id!");
@@ -29,26 +33,27 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        return jdbcTemplate.query("SELECT * FROM films", filmMapper);
+        return jdbcTemplate.query("SELECT *, mpa_ratings.name AS mpa_name " +
+                "FROM films " +
+                "INNER JOIN mpa_ratings USING (mpa_id) ", filmMapper);
     }
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        List<Integer> filmIds = getPopularFilmsIds(count);
-        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-        return new LinkedList<>(jdbcTemplate.query(String.format("SELECT * " +
-                        "FROM films " +
-                        "WHERE film_id IN (%s);", inSql), filmIds.toArray(),
-                filmMapper));
-    }
-
-    private List<Integer> getPopularFilmsIds(Integer count) {
-        return jdbcTemplate.query("SELECT films.film_id " +
-                "FROM films " +
-                "LEFT JOIN rates USING (film_id) " +
-                "GROUP BY films.film_id " +
-                "ORDER BY COUNT(user_id) DESC " +
-                "LIMIT " + count, (resultSet, rowNum) -> resultSet.getInt("film_id"));
+        return jdbcTemplate.query(
+                "SELECT films.film_id, " +
+                        "films.mpa_id, " +
+                        "mpa_ratings.name AS mpa_name, " +
+                        "films.name, " +
+                        "films.description, " +
+                        "films.release_date, " +
+                        "films.duration " +
+                        "FROM rates " +
+                        "RIGHT JOIN films USING (film_id) " +
+                        "INNER JOIN mpa_ratings USING (mpa_id) " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY COUNT(user_id) DESC " +
+                        "LIMIT " + count + ";", filmMapper);
     }
 
     @Override
@@ -69,7 +74,6 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film putFilm(Film film) {
-        getFilmById(film.getId());
         String query = "UPDATE films SET " +
                 "name = ?, " +
                 "description = ?, " +
@@ -77,13 +81,16 @@ public class FilmDbStorage implements FilmStorage {
                 "duration = ?, " +
                 "mpa_id = ? " +
                 "WHERE film_id = ?;";
-        jdbcTemplate.update(query,
+        int updatedRowCount = jdbcTemplate.update(query,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
+        if (updatedRowCount == 0) {
+            throw new ItemNotPresentException("There's no film with " + film.getId() + " id!");
+        }
         return film;
     }
 

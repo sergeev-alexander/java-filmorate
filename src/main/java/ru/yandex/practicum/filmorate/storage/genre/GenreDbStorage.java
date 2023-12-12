@@ -53,6 +53,7 @@ public class GenreDbStorage implements GenreStorage {
         if (genreSet == null || genreSet.isEmpty()) {
             return;
         }
+        genreSet.forEach(genre -> getGenreById(genre.getId()));
         List<Genre> genreList = new ArrayList<>(genreSet);
         jdbcTemplate.batchUpdate("INSERT INTO film_genres (film_id, genre_id) " +
                 "VALUES (?, ?);", new BatchPreparedStatementSetter() {
