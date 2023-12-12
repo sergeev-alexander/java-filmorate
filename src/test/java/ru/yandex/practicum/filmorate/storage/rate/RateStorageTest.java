@@ -101,8 +101,8 @@ class RateStorageTest {
                 "(3, 2);");
         rateStorage.deleteRate(1, 1);
         rateStorage.deleteRate(1, 2);
-        assertEquals(List.of(createSomeFilms().get(2), createSomeFilms().get(0), createSomeFilms().get(1))
-                , filmStorage.getPopularFilms(10),
+        assertEquals(List.of(createSomeFilms().get(2), createSomeFilms().get(0), createSomeFilms().get(1)),
+                filmStorage.getPopularFilms(10),
                 "Received wrong film list!");
     }
 
