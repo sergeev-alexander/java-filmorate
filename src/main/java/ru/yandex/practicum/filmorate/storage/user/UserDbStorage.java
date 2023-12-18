@@ -42,6 +42,7 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    @Override
     public List<User> getAllUserFriends(Integer userId) {
         getUserById(userId);
         return new LinkedList<>(jdbcTemplate.query("SELECT * " +
