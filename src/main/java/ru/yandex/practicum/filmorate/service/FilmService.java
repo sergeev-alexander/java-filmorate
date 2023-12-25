@@ -1,67 +1,78 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.rate.RateStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Slf4j
+
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
+    private final MpaStorage mpaStorage;
+    private final GenreStorage genreStorage;
+    private final RateStorage rateStorage;
 
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return genreStorage.setGenresToFilmList(filmStorage.getAllFilms());
     }
 
-    public Film getFilmById(Integer id) {
-        return Optional.of(filmStorage.getFilmById(id)).orElseThrow(
-                () -> new ItemNotPresentException("There's no film with " + id + " id!"));
+    public Film getFilmById(Integer filmId) {
+        Film film = filmStorage.getFilmById(filmId);
+        film.setGenres(genreStorage.getFilmGenresFromDb(filmId));
+        return film;
     }
 
-    public Film postFilm(Film film) {
-        return filmStorage.postFilm(film);
+    public List<Genre> getAllGenres() {
+        return genreStorage.getAllGenres();
     }
 
-    public Film putFilm(Film film) {
-        return filmStorage.putFilm(film);
+    public Genre getGenreById(Integer genreId) {
+        return genreStorage.getGenreById(genreId);
     }
 
-    public void putLike(Integer id, Integer userId) {
-        userStorage.getUserById(userId);
-        getFilmById(id).getLikes().add(userId);
-        log.info("User {} liked film {}", userId, id);
+    public List<Mpa> getAllMpa() {
+        return mpaStorage.getAllMpa();
     }
 
-    public void deleteLike(Integer id, Integer userId) {
-        userStorage.getUserById(userId);
-        getFilmById(id).getLikes().remove(userId);
-        log.info("User {} unliked film {}", userId, id);
+    public Mpa getMpaById(Integer mpaId) {
+        return mpaStorage.getMpaById(mpaId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        List<Film> filmList = filmStorage.getAllFilms().stream()
-                .sorted(Comparator.comparing(film -> film.getLikes().size(), Comparator.nullsLast(Comparator.reverseOrder())))
-                .limit(count)
-                .collect(Collectors.toList());
-        log.info("Showed popular films {}", filmList);
-        return filmList;
+        return genreStorage.setGenresToFilmList(filmStorage.getPopularFilms(count));
+    }
+
+    public Film postFilm(Film film) {
+        Film resultFilm = filmStorage.postFilm(film);
+        genreStorage.setFilmGenresToDb(resultFilm.getId(), resultFilm.getGenres());
+        resultFilm.setGenres(genreStorage.getFilmGenresFromDb(resultFilm.getId()));
+        resultFilm.setMpa(mpaStorage.getMpaById(resultFilm.getMpa().getId()));
+        return resultFilm;
+    }
+
+    public Film putFilm(Film film) {
+        Film resultFilm = filmStorage.putFilm(film);
+        genreStorage.setFilmGenresToDb(resultFilm.getId(), resultFilm.getGenres());
+        resultFilm.setGenres(genreStorage.getFilmGenresFromDb(resultFilm.getId()));
+        return resultFilm;
+    }
+
+    public void putRate(Integer filmId, Integer userId) {
+        rateStorage.putRate(filmId, userId);
+    }
+
+    public void deleteRate(Integer filmId, Integer userId) {
+        rateStorage.deleteRate(filmId, userId);
     }
 
 }
