@@ -5,7 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashMap;
@@ -25,9 +25,9 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.queryForObject("SELECT *, mpa_ratings.name AS mpa_name " +
                     "FROM films " +
                     "INNER JOIN mpa_ratings USING (mpa_id)" +
-                    "WHERE film_id = " + filmId, filmMapper);
+                    "WHERE film_id = ?;", filmMapper, filmId);
         } catch (EmptyResultDataAccessException e) {
-            throw new ItemNotPresentException("There's no film with " + filmId + " id!");
+            throw new NotFoundException("There's no film with " + filmId + " id!");
         }
     }
 
@@ -39,7 +39,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilmsByCount(Integer count) {
         return jdbcTemplate.query(
                 "SELECT films.film_id, " +
                         "films.mpa_id, " +
@@ -53,7 +53,67 @@ public class FilmDbStorage implements FilmStorage {
                         "INNER JOIN mpa_ratings USING (mpa_id) " +
                         "GROUP BY films.film_id " +
                         "ORDER BY COUNT(user_id) DESC " +
-                        "LIMIT " + count + ";", filmMapper);
+                        "LIMIT ?;", filmMapper, count);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenre(Integer count, Integer genreId) {
+        return jdbcTemplate.query(
+                "SELECT films.film_id, " +
+                        "films.mpa_id, " +
+                        "mpa_ratings.name AS mpa_name, " +
+                        "films.name, " +
+                        "films.description, " +
+                        "films.release_date, " +
+                        "films.duration " +
+                        "FROM rates " +
+                        "RIGHT JOIN films USING (film_id) " +
+                        "INNER JOIN mpa_ratings USING (mpa_id) " +
+                        "INNER JOIN film_genres USING (film_id) " +
+                        "WHERE film_genres.genre_id = ? " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY COUNT(user_id) DESC " +
+                        "LIMIT ?;", filmMapper, genreId, count);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByYear(Integer count, Integer year) {
+        return jdbcTemplate.query(
+                "SELECT films.film_id, " +
+                        "films.mpa_id, " +
+                        "mpa_ratings.name AS mpa_name, " +
+                        "films.name, " +
+                        "films.description, " +
+                        "films.release_date, " +
+                        "films.duration " +
+                        "FROM rates " +
+                        "RIGHT JOIN films USING (film_id) " +
+                        "INNER JOIN mpa_ratings USING (mpa_id) " +
+                        "WHERE EXTRACT(YEAR FROM release_date) = ? " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY COUNT(user_id) DESC " +
+                        "LIMIT ?;", filmMapper, year, count);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenreAndYear(Integer count, Integer genreId, Integer year) {
+        return jdbcTemplate.query(
+                "SELECT films.film_id, " +
+                        "films.mpa_id, " +
+                        "mpa_ratings.name AS mpa_name, " +
+                        "films.name, " +
+                        "films.description, " +
+                        "films.release_date, " +
+                        "films.duration " +
+                        "FROM rates " +
+                        "RIGHT JOIN films USING (film_id) " +
+                        "INNER JOIN mpa_ratings USING (mpa_id) " +
+                        "INNER JOIN film_genres USING (film_id) " +
+                        "WHERE EXTRACT(YEAR FROM release_date) = ? " +
+                        "AND film_genres.genre_id = ? " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY COUNT(user_id) DESC " +
+                        "LIMIT ?;", filmMapper, year, genreId, count);
     }
 
     @Override
@@ -89,7 +149,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getMpa().getId(),
                 film.getId());
         if (updatedRowCount == 0) {
-            throw new ItemNotPresentException("There's no film with " + film.getId() + " id!");
+            throw new NotFoundException("There's no film with " + film.getId() + " id!");
         }
         return film;
     }

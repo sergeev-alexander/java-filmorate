@@ -10,7 +10,13 @@ public interface FilmStorage {
 
     List<Film> getAllFilms();
 
-    List<Film> getPopularFilms(Integer count);
+    List<Film> getPopularFilmsByCount(Integer count);
+
+    List<Film> getPopularFilmsByGenre(Integer count, Integer genreId);
+
+    List<Film> getPopularFilmsByYear(Integer count, Integer year);
+
+    List<Film> getPopularFilmsByGenreAndYear(Integer count, Integer genreId, Integer year);
 
     Film postFilm(Film film);
 

@@ -48,8 +48,18 @@ public class FilmService {
         return mpaStorage.getMpaById(mpaId);
     }
 
-    public List<Film> getPopularFilms(Integer count) {
-        return genreStorage.setGenresToFilmList(filmStorage.getPopularFilms(count));
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        List<Film> resultFilmlist;
+        if (null != genreId && null != year) {
+            resultFilmlist = filmStorage.getPopularFilmsByGenreAndYear(count, genreId, year);
+        } else if (null != genreId) {
+            resultFilmlist = filmStorage.getPopularFilmsByGenre(count, genreId);
+        } else if (null != year) {
+            resultFilmlist = filmStorage.getPopularFilmsByYear(count, year);
+        } else {
+            resultFilmlist = filmStorage.getPopularFilmsByCount(count);
+        }
+        return genreStorage.setGenresToFilmList(resultFilmlist);
     }
 
     public Film postFilm(Film film) {

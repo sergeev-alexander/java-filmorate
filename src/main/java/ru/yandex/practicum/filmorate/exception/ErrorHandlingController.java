@@ -29,9 +29,9 @@ public class ErrorHandlingController {
         return response;
     }
 
-    @ExceptionHandler(ItemNotPresentException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> itemNotPresentHandle(ItemNotPresentException e) {
+    public Map<String, String> itemNotPresentHandle(NotFoundException e) {
         Map<String, String> response = new HashMap<>();
         response.put("id", e.getMessage());
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());

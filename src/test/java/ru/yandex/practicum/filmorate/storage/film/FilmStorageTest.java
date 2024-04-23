@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ru.yandex.practicum.filmorate.exception.ItemNotPresentException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
@@ -59,8 +59,8 @@ class FilmStorageTest {
     void getFilmById_not_existing_id_throws_itemNotPresentException() {
         try {
             filmStorage.getFilmById(123);
-        } catch (ItemNotPresentException e) {
-            assertEquals(ItemNotPresentException.class, e.getClass(),
+        } catch (NotFoundException e) {
+            assertEquals(NotFoundException.class, e.getClass(),
                     "Thrown wrong exception!");
             assertEquals("There's no film with 123 id!", e.getMessage(),
                     "Exception has wrong message!");
@@ -146,8 +146,8 @@ class FilmStorageTest {
         film.setId(123);
         try {
             filmStorage.putFilm(film);
-        } catch (ItemNotPresentException e) {
-            assertEquals(ItemNotPresentException.class, e.getClass(),
+        } catch (NotFoundException e) {
+            assertEquals(NotFoundException.class, e.getClass(),
                     "Thrown wrong exception!");
             assertEquals("There's no film with 123 id!", e.getMessage(),
                     "Exception has wrong message!");

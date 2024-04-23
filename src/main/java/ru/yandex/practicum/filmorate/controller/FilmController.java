@@ -1,43 +1,42 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
-@Slf4j
-@Validated
+
+
 @RestController
+@RequestMapping("/films")
+@Validated
+@RequiredArgsConstructor
 public class FilmController {
 
     private final FilmService filmService;
 
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
-
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> getAllFilms() {
         return filmService.getAllFilms();
     }
 
-    @GetMapping("/films/{filmId}")
-    public Film getFilmById(@PathVariable Integer filmId) {
+    @GetMapping("/{filmId}")
+    public Film getFilmById(@PathVariable @Positive(message = "Must be positive!") Integer filmId) {
         return filmService.getFilmById(filmId);
     }
 
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     public List<Film> getPopularFilms(
-            @Positive(message = "Must be positive!")
-            @RequestParam(required = false, defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
+            @RequestParam(defaultValue = "10") @Positive(message = "Must be positive!") Integer count,
+            @RequestParam(required = false) @Positive(message = "Must be positive!") Integer genreId,
+            @RequestParam(required = false) @Min(value = 1895) Integer year) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @PostMapping("/films")
