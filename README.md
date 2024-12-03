@@ -1,2 +1,2 @@
-# java-filmorate
-Template repository for Filmorate project.
+# Filmorate app
+Educational project for adding, advanced search and rating of films by users.
